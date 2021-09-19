@@ -1,7 +1,7 @@
 import unittest
 from queue import *
 
-class TestQueue(unittest.TestCase):
+class QueueTest(unittest.TestCase):
 
     def setUp(self):
         self.q = Queue()
