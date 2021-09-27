@@ -17,7 +17,8 @@ class GraphLTest(unittest.TestCase):
             self.g2.add_edge(v1, v2)
 
     def test_construct_works(self):
-        GraphL()
+        g = GraphL()
+        self.assertTrue(g.is_null())
 
     def test_is_null_with_null_graph(self):
         self.assertTrue(self.g1.is_null())
@@ -52,5 +53,33 @@ class GraphLTest(unittest.TestCase):
         v = self.g2.add_vertex()
         self.assertEqual(self.g2_vertices + [v], self.g2.vertices())
 
+    def test_add_edge_with_unknown_vertex(self):
+        with self.assertRaises(Exception):
+            self.g2.add_edge(654, 321)
+
+    def test_add_edge_with_known_vertices(self):
+        self.g2.add_edge(2, 8)
+
+    def test_neighbors_with_unknown_vertex(self):
+        with self.assertRaises(Exception):
+            self.g2.neighbors(42)
+
+    def test_neighbors_with_known_vertex(self):
+        self.assertEqual([0, 1, 3, 5], self.g2.neighbors(6))
+
+    def test_is_bound_to_with_unknown_vertices(self):
+        with self.assertRaises(Exception):
+            self.g2.is_bound_to(42, 77)
+
+    def test_is_bound_to_with_known_vertices(self):
+        self.assertTrue(self.g2.is_bound_to(1, 6))
+        self.assertTrue(self.g2.is_bound_to(6, 1))
+        self.assertFalse(self.g2.is_bound_to(1, 5))
+        self.assertFalse(self.g2.is_bound_to(5, 1))
+
+    def test_edges(self):
+        self.assertEqual(len(self.g2_edges), len(self.g2.edges()))
+        self.assertTrue(all(e in self.g2_edges for e in self.g2.edges()))
+        
 if __name__ == '__main__':
     unittest.main()

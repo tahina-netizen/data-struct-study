@@ -1,3 +1,4 @@
+import functools
 """
 Unoriented graph.
 Implemented using adjacency list.
@@ -28,6 +29,7 @@ class GraphL:
 
     """
     Give the degree of given vertex.
+    Raise an exception if the given vertex does not exist.
     :param vertex: (identifier) identifier of the vertex
     :return: (int) the number of neighbors of the given vertex.
     """
@@ -59,6 +61,7 @@ class GraphL:
         return len(self._adjacency_list) - 1
     """
     Add an edge between the given vertices.
+    Raise an exception if the given vertices do not exist.
     :param v1: (int) id of the vertex to be bound with v2
     :param v2: (int) id of the vertex to be bound with v1
     """
@@ -70,7 +73,8 @@ class GraphL:
             self._adjacency_list[v2].append(v1)
     
     """
-    Give the list of the neighbors of the given vertice.
+    Give the list of the neighbors of the given vertex.
+    Raise an exception if the given vertex does not exist.
     :return: (list) the list (of int) of the neighbors of the given vertice.
     This list is sorted by the id of the vertices.
     """
@@ -80,8 +84,45 @@ class GraphL:
         return sorted(self._adjacency_list[v].copy())
 
     """
-    Tell if v1 is bound to v2
+    Tell if v1 is bound to v2.
+    Raise an exception if the given vertices do not exist.
     :return: (bool) True iff v1 is bound to v2
     """
     def is_bound_to(self, v1: int, v2: int) -> bool:
         return v2 in self.neighbors(v1) or v1 in self.neighbors(v2)
+
+    """
+    Give the list of the edges of this graph.
+    :return: (list) a list of couple. A couple (a, b) represents the edge between a and b.
+    """
+    def edges(self) -> list:
+        res = []
+        for a in range(len(self._adjacency_list)):
+            for b in self._adjacency_list[a]:
+                if not ((a, b) in res or (b, a) in res):
+                    res.append((min(a, b), max(a, b)))
+
+        res.sort(key=functools.cmp_to_key(cmp_edges))
+        return res
+
+
+"""
+Compare two edges.
+:param e1: (tuple) a couple (a1, b1) representing the edge to compare with e2
+:param e2: (tuple) a couple (a2, b2) representing the edge to compare with e1
+:return: (int) | a1 > a2 = 1
+               | a1 < a2 = -1
+               | b1 > b2 = 1
+               | b1 < b2 = -1
+               | otherwise = 0
+               (this is in Haskell guards notation)
+"""
+def cmp_edges(e1, e2):
+    a1, b1 = e1
+    a2, b2 = e2
+
+    if a1 > a2 : return 1
+    if a1 < a2: return -1
+    if b1 > b2: return 1
+    if b1 < b2: return -1
+    return 0
