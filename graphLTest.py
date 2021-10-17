@@ -80,6 +80,12 @@ class GraphLTest(unittest.TestCase):
     def test_edges(self):
         self.assertEqual(len(self.g2_edges), len(self.g2.edges()))
         self.assertTrue(all(e in self.g2_edges for e in self.g2.edges()))
+
+    def test_BFT_with_non_empty_graph_with_known_vertice_as_start(self):
+        res = []
+        self.g2.breadth_first_traversal(2, lambda v: res.append(v))
+        self.assertEqual(len(self.g2_vertices), len(res))
+        self.assertEqual(set(range(len(self.g2_vertices))), set(res))
         
 if __name__ == '__main__':
     unittest.main()

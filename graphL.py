@@ -1,4 +1,6 @@
 import functools
+import numpy
+from queue import Queue
 """
 Unoriented graph.
 Implemented using adjacency list.
@@ -105,7 +107,25 @@ class GraphL:
         res.sort(key=functools.cmp_to_key(cmp_edges))
         return res
 
-
+    """
+    Breadth-first traversal of this graph begining from the given vertex
+    and applying f on each traversed vertex.
+    Raise an Exception if the given vertex does not exist.
+    :param begin: (int) id of the vertex from which to start the traversal
+    :param f: (callable) function applied to each traversed vertex 
+    """
+    def breadth_first_traversal(self, begin, f):
+        to_treat = Queue()
+        to_treat.enqueue(begin)
+        already_treated = _init_array_with(self.order(), False)
+        already_treated[begin] = True
+        while not to_treat.is_empty():
+            current_vertex = to_treat.dequeue()
+            f(current_vertex)
+            for v in self.neighbors(current_vertex):
+                if not already_treated[v]:
+                    to_treat.enqueue(v)
+                    already_treated[v] = True
 """
 Compare two edges.
 :param e1: (tuple) a couple (a1, b1) representing the edge to compare with e2
@@ -126,3 +146,12 @@ def cmp_edges(e1, e2):
     if b1 > b2: return 1
     if b1 < b2: return -1
     return 0
+
+"""
+Return an array of size l with all case initialized with v.
+:param l: (int) size of the returned array
+:param v: (any) a value with which to initialize every case of the returned array
+:return: (numpy.array) an array with all case initialized with v.
+"""
+def _init_array_with(l, v):
+    return numpy.array([v for _ in range(l)])
